@@ -19,6 +19,15 @@ string LinuxParser::OperatingSystem() {
   std::ifstream filestream(kOSPath);
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
+      // note - why do they replace spaces with underscores?
+      // answer to note: apparently newlines and " " are both
+      // classifed as white space characters. according to the spec
+      // in a whitespace delimited input the whitespaces will
+      // become individual tokens. If a value has spaces in it,
+      // the white space would break up the value into two lines
+      // on the other hand, replace = and " with spaces will lead to 
+      // only one value per line or only one value stripped from
+      // useless double quotes per line, as the file is separated into KEY=VALUE or KEY="VALUE"
       std::replace(line.begin(), line.end(), ' ', '_');
       std::replace(line.begin(), line.end(), '=', ' ');
       std::replace(line.begin(), line.end(), '"', ' ');
@@ -35,6 +44,9 @@ string LinuxParser::OperatingSystem() {
 }
 
 // DONE: An example of how to read data from the filesystem
+
+// This file has all information stored on one line, conveniently.
+// Most of the files look more like the kOSPath above
 string LinuxParser::Kernel() {
   string os, kernel, version;
   string line;
@@ -47,7 +59,8 @@ string LinuxParser::Kernel() {
   return kernel;
 }
 
-// BONUS: Update this to use std::filesystem
+// BONUS: Update this to use std::filesystem 
+// this gets every directory name that is an integer, currently using <dirent.h> lib
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
   DIR* directory = opendir(kProcDirectory.c_str());
@@ -67,11 +80,57 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
+
+
+// Another design idea would be to read a file once, extract all relevant information,
+// save it in some kind of variable (this isn't an instantiable class, so a private variable doesn't work).
+// Then calls to metrics would either hit the cache and return pre-extracted information
+// or call the general function that extracts all information in one go
+
+
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+
+// I followed the original htop way to calculate memory
+// utilization - MemTotal - MemFree
+float LinuxParser::MemoryUtilization() { 
+  string line;
+  string key;
+  float value;
+  float memtotal;
+  float memfree;
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), ':', ' ');
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        if (key == "MemTotal") {
+          memtotal = value;
+        }
+        if (key == "MemFree") {
+          memfree = value;
+        }
+      }
+    }
+  }
+
+  //learned about r-values vs l-values, guess this would be
+  // an r-value?
+  return memtotal - memfree;
+}
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() { 
+  string line;
+  long uptime;
+  std::ifstream stream(kProcDirectory + kUptimeFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> uptime;
+  }
+  return uptime;
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -90,10 +149,53 @@ long LinuxParser::IdleJiffies() { return 0; }
 vector<string> LinuxParser::CpuUtilization() { return {}; }
 
 // TODO: Read and return the total number of processes
-int LinuxParser::TotalProcesses() { return 0; }
+int LinuxParser::TotalProcesses() { 
+
+  string line;
+  string key;
+  int processes_num;
+
+  std::ifstream filestream(kProcDirectory + kStatFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), ' ', '_');
+      std::istringstream linestream(line);
+      while (linestream >> key) {
+        if (key == "processes") {
+          linestream >> processes_num;
+        }
+      }
+    }
+  }
+
+  return processes_num;
+ 
+}
 
 // TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+int LinuxParser::RunningProcesses() { 
+
+  string line;
+  string key;
+  int running_processes_num;
+
+  std::ifstream filestream(kProcDirectory + kStatFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), ' ', '_');
+      std::istringstream linestream(line);
+      while (linestream >> key) {
+        if (key == "procs_running") {
+          linestream >> running_processes_num;
+        }
+      }
+    }
+  }
+
+  return running_processes_num;
+
+
+}
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
