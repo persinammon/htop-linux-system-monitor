@@ -4,8 +4,6 @@ This project practices object oriented programming in C++, using the [htop](http
 My contributions are marked under TODO's.
 
 
-![System Monitor](images/monitor.png)
-
 ## Classes
 
 - Interestingly, LinuxParser was implemented as a namespace. There's no object level data/need for multiple instantiations, so it makes sense
@@ -49,5 +47,4 @@ wrote it using CMake in case the student wants to extend this to a Windows files
 1. `make build` to build the project.
 
 3. `./build/monitor` to run the generated executable.
-![Starting System Monitor](images/starting_monitor.png)
 
