@@ -298,7 +298,14 @@ string LinuxParser::Ram(int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> first >> value) {
-        if (first == "VmSize") {
+        /*
+          VMSize gives the sum of all virtual memory, while VMRss gives the size of the exact 
+          physical memory used as part of physical RAM. VMSize could even be bigger than total memory.
+          Hence, switched it out to VmRSS.
+
+          Link to documentation: https://man7.org/linux/man-pages/man5/proc.5.html
+        */
+        if (first == "VmRSS") {
           ram = value;
         }
       }

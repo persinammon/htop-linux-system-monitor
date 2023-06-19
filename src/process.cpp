@@ -25,12 +25,16 @@ float Process::CpuUtilization() {
 string Process::Command() { 
     if (command_ == "") {
         command_ = LinuxParser::Command(pid_);
+        if (command_.size() > 50) command_ = command_.substr(0,49) + "...";
     }
     return command_; 
 }
 
 // TODO: Return this process's memory utilization
-string Process::Ram() { return LinuxParser::Ram(pid_); }
+string Process::Ram() { 
+    int ram = std::stoi(LinuxParser::Ram(pid_)) / 1024; // convert to MB
+    return to_string(ram);
+}
 
 // TODO: Return the user (name) that generated this process
 string Process::User() { 
@@ -41,11 +45,11 @@ string Process::User() {
 }
 
 // TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
+long int Process::UpTime() { return LinuxParser::UpTime() - LinuxParser::UpTime(pid_); }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
     Process b {*this};
-    return (b.CpuUtilization() < ((Process) a).CpuUtilization()) ? true: false; 
+    return (b.CpuUtilization() < ((Process) a).CpuUtilization()); 
 }

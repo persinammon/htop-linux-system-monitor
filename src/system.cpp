@@ -15,6 +15,7 @@ using std::size_t;
 using std::string;
 using std::vector;
 
+
 /* Pass through functions for metrics that can change, cached values for member variables that don't. */
 
 #include "linux_parser.h"
@@ -26,7 +27,7 @@ Processor& System::Cpu() { return cpu_; }
 vector<Process>& System::Processes() { 
     processes_.clear();
     for (int id : LinuxParser::Pids()) {
-        processes_.push_back(Process(id));
+        processes_.emplace_back(id);
     }
     //sort(processes_.begin(), processes_.end());
     return processes_; 
