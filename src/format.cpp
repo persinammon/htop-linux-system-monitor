@@ -17,7 +17,7 @@ string Format::ElapsedTime(long seconds) {
   int finalSeconds = seconds - minutes*60; // finds the extra seconds that were removed
   int hours = floor(minutes / 60); // changes the number of minutes to hours, and gets rid of extra minutes
   minutes = minutes - hours*60; // finds the extra minutes
-  formattedTime += (hours < 10) ? (" 0" + to_string(hours) + ":") : (to_string(hours) + ":");
+  formattedTime += (hours < 10) ? ("0" + to_string(hours) + ":") : (to_string(hours) + ":");
   formattedTime += (minutes < 10) ? ("0" + to_string(minutes) + ":") : (to_string(minutes) + ":");
   formattedTime += (finalSeconds < 10) ? ("0" + to_string(finalSeconds)) : (to_string(finalSeconds));
   return formattedTime; 
