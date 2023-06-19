@@ -13,10 +13,10 @@ There are decisions such as whether to read once then cache the result in the ob
 where each time it is called the file is read again. There is an instance of an overloaded less than operator to 
 compare one process to the process with the method called, allowing the sort function to sort processes by X metric.
 - I wrote a bit on why the project authors made a parsing decision [here](./src/linux_parser.cpp#L22).
-- There were some bonus extensions that I implemented.
 - The authors originally used this attribute specifier to suppress compiler warnings about unused methods: `[[maybe_unused]](since C++17)`,
 which was interesting to see.
 Example usage: `long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }`
+
 
 ## Resources
 
