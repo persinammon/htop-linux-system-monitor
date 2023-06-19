@@ -8,6 +8,8 @@
 #include "processor.h"
 #include "system.h"
 
+//#include <algorithm
+
 using std::set;
 using std::size_t;
 using std::string;
@@ -26,6 +28,7 @@ vector<Process>& System::Processes() {
     for (int id : LinuxParser::Pids()) {
         processes_.push_back(Process(id));
     }
+    //sort(processes_.begin(), processes_.end());
     return processes_; 
 }
 
