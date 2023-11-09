@@ -1,10 +1,10 @@
 # htop 
 
 This project practices object oriented programming in C++, using the [htop](https://htop.dev/) process viewer for a Linux file system as the project goal.
-My contributions are marked under TODO's.
+My contributions within the source code are marked under TODO's.
 
 
-## Classes
+## Notes
 
 - Interestingly, LinuxParser was implemented as a namespace. There's no object level data/need for multiple instantiations, so it makes sense
 to give it some more implicit structure that way. The constant string [paths](./include/linux_parser.h) are very interesting to read, as they are how system data is stored in memory on a Linux OS.
